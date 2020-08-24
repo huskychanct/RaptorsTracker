@@ -11,9 +11,9 @@ import SwiftUI
 import Combine
 
 struct Game : Identifiable {
+    var date = String()
     var id = String()
     var opponent = String()
-    var date = String()
     var score = Int()
     var outcome = String()
 

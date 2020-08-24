@@ -12,39 +12,49 @@ import Combine
 
 struct ContentView: View {
     @ObservedObject var gameHistory = GameHistory()
-    @State var newGame: String = ""
+    @State var newGameDate: String = ""
     
     var searchBar:  some View {
         HStack {
-            TextField("Enter in a new game", text:
-                self.$newGame)
+            TextField("Enter Date of Game", text:
+                self.$newGameDate)
             Button(action: self.addNewGame, label: {
-                Text("Log New Game")
+                Text("Log Game")
             })
         }
     }
     
     func addNewGame () {
-        
+        gameHistory.games.append(Game(id:
+            String(gameHistory.games.count + 1),
+            opponent: newGameDate))
+        self.newGameDate = ""
+        // Auto generates ID for the Game once the date is added
     }
-    
-    
     
     var body: some View {
         NavigationView{
             VStack{
-                VStack(alignment: .center) {
-                    Image("raptorsLogo")
-                    Text("Raptors Tracker")
-                    searchBar.padding()
-                }
+//                VStack(alignment: .center) {
+//                    Image("raptorsLogo")
+//                    Text("Raptors Tracker")
+//                    searchBar.padding()
+//                }
+                Image("raptorsLogo")
+                Text("Raptors Tracker")
+                searchBar.padding()
                 Spacer()
-                List(self.gameHistory.games){ game in
-                    Text(game.opponent)
-                }
+                List {
+                    ForEach(self.gameHistory.games) { game in
+                        Text(game.date)
+                    }.onMove(perform: self.move)
+                }.navigationBarItems(trailing: EditButton())
             }
         }
     }
+    func move(from source : IndexSet, to destination: Int) {
+        gameHistory.games.move(fromOffsets: source, toOffset: destination)
+    } // Places the newly added game under the previous game
 }
 
 
